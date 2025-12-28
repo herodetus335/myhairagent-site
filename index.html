@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyHairAgent | The AI Voice Agent for Salons</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #FAFAF9;
+            --bg-surface: #FFFFFF;
+            --bg-dark: #1A1A1A;
+            --primary: #C58F7C;
+            --primary-hover: #A87665;
+            --text-main: #2D2D2D;
+            --text-muted: #666666;
+            --text-light: #F2F2F2;
+            --accent-soft: #F2E8E4;
+            --spacing-container: 1200px;
+            --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.08);
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.04);
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-main);
+        }
+        h1 { font-size: 2.5rem; letter-spacing: -1px; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.25rem; margin-bottom: 1rem; }
+        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        p { margin-bottom: 1.5rem; color: var(--text-muted); max-width: 700px; }
+        .text-center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+        /* Layout & Utility */
+        .container {
+            max-width: var(--spacing-container);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        section { padding: 6rem 0; position: relative; }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(197, 143, 124, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(197, 143, 124, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--text-main);
+            color: var(--text-main);
+        }
+        .btn-outline:hover {
+            background: var(--text-main);
+            color: white;
+        }
+
+        /* Design Elements */
+        .diagonal-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            transform: skewY(-3deg);
+            background: var(--bg-surface);
+            transform-origin: top left;
+        }
+        .diagonal-bg.reverse { transform: skewY(3deg); }
+        .diagonal-bg-accent { background: var(--accent-soft); }
+
+        .card {
+            background: var(--bg-surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.02);
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-float);
+        }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .nav-flex { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 700; font-size: 1.5rem; color: var(--text-main); letter-spacing: -0.5px; font-family: 'Playfair Display', serif; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .logo-img { height: 32px; width: auto; }
+        .nav-links { display: none; gap: 2rem; align-items: center; }
+        .nav-link { color: var(--text-main); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+
+        /* Grid */
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        
+        /* Calculator */
+        .calc-wrapper { display: flex; flex-direction: column; gap: 2rem; }
+        .calc-inputs { background: white; padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-card); }
+        .calc-results { background: var(--bg-dark); color: white; padding: 2rem; border-radius: 16px; box-shadow: var(--shadow-float); }
+        .calc-group { margin-bottom: 1.5rem; }
+        .calc-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .calc-group input { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; font-family: inherit; }
+        .result-val { font-size: 2.5rem; font-family: 'Playfair Display', serif; color: var(--primary); margin-bottom: 0.25rem; }
+
+        /* FAQ */
+        .faq-item { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 1.5rem 0; }
+        .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; color: var(--text-muted); font-size: 0.95rem; }
+        .faq-answer.open { max-height: 200px; margin-top: 1rem; }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            h1 { font-size: 3.5rem; }
+            .grid-2 { grid-template-columns: 1fr 1fr; align-items: center; }
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+            .nav-links { display: flex; }
+            .calc-wrapper { flex-direction: row; }
+            .calc-inputs, .calc-results { flex: 1; }
+
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav id="navbar">
+        <div class="container nav-flex">
+            <a href="#hero" class="logo"><img src="images/logo_no_white.png" alt="MyHairAgent" class="logo-img">MyHairAgent</a>
+            <div class="nav-links">
+                <a href="#problem" class="nav-link">Problem</a>
+                <a href="#solution" class="nav-link">Solution</a>
+                <a href="#results" class="nav-link">Results</a>
+                <a href="#calculator" class="nav-link">Calculator</a>
+                <a href="book-demo.html" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Book Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Get Attention -->
+    <section id="hero" style="padding-top: 180px; padding-bottom: 8rem; overflow: hidden;">
+        <div class="diagonal-bg" style="transform: skewY(-5deg); top: -150px; height: 130%;"></div>
+        <div class="container grid-2">
+            <div>
+                <span style="font-size: 0.9rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 1.5rem;">For Hair Salons & Stylists</span>
+                <h1>Never miss another call or appointment.</h1>
+                <p style="font-size: 1.25rem; margin-top: 1.5rem; color: var(--text-muted);">
+                    Capture 100% more calls with zero sick days. The premium AI Voice Agent that works while you sleep.
+                </p>
+                <div style="margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="book-demo.html" class="btn btn-primary">Book Demo</a>
+                    <a href="#calculator" class="btn btn-outline">Calculate Lost Revenue</a>
+                </div>
+            </div>
+            <!-- Dynamic Geometric Graphic -->
+            <div style="position: relative;">
+                <div style="background: white; padding: 2rem; border-radius: 20px; box-shadow: var(--shadow-float); position: relative; z-index: 2;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 1rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 00-1.02.24l-2.2 2.2a15.045 15.045 0 01-6.59-6.59l2.2-2.21c.28-.26.36-.65.25-1C8.7 6.45 8.5 5.25 8.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 17 17 0 0017 17c.55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem;">MyHairAgent</div>
+                            <div style="font-size: 0.8rem; color: #888;">Active • 10:42 PM</div>
+                        </div>
+                    </div>
+                    <div style="font-family: monospace; font-size: 0.9rem; color: #444; line-height: 1.6;">
+                        <p style="background: #f4f4f4; padding: 0.8rem; border-radius: 8px 8px 8px 0; display: inline-block; margin-bottom: 0.5rem;">"Hi! I see you have an opening for a Balayage tomorrow at 2 PM?"</p>
+                        <br/>
+                        <p style="background: var(--accent-soft); padding: 0.8rem; border-radius: 8px 8px 0 8px; display: inline-block; float: right; color: var(--text-main);">"Yes, Sarah has an opening at 2:00 PM. The price starts at $150. Shall I book that for you?"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Identify the Problem -->
+    <section id="problem" style="background: var(--bg-surface);">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 4rem;">
+                <h2>Are you "elbow-deep in work"<br>while the phone rings?</h2>
+                <p>It's the booking treadmill. You love your craft, but operational interruptions are costing you thousands.</p>
+            </div>
+            <div class="grid-3">
+                <div class="card">
+                    <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem; font-family: 'Playfair Display', serif;">68%</div>
+                    <h3>Operational Interruptions</h3>
+                    <p>Salon owners cite "phone interruptions during busy treatments" as their biggest daily frustration.</p>
+                </div>
+                <div class="card">
+                    <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem; font-family: 'Playfair Display', serif;">40%</div>
+                    <h3>Missed Opportunities</h3>
+                    <p>Of appointments are booked after hours. If you don't answer 24/7, you're losing nearly half your business.</p>
+                </div>
+                <div class="card">
+                    <div style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem; font-family: 'Playfair Display', serif;">$61B</div>
+                    <h3>Revenue Lost</h3>
+                    <p>The beauty industry loses billions annually to missed high-intent calls. 85% of callers won't call back.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Provide Solution -->
+    <section id="solution" style="padding: 6rem 0;">
+        <div class="diagonal-bg diagonal-bg-accent reverse"></div>
+        <div class="container">
+            <div class="grid-2">
+                <div>
+                    <h2>Meet your new 24/7 Front Desk.</h2>
+                    <p>An AI Voice Agent that acts as a virtual receptionist. It understands, processes, and responds to voice commands 24/7/365.</p>
+                    <p>It handles the 80-90% of routine tasks—checking real-time availability, booking services, and answering pricing questions—so your human staff can focus on the client in the chair.</p>
+                </div>
+                <div class="card" style="background: white;">
+                    <h3>How It Works</h3>
+                    <div style="margin-top: 2rem;">
+                        <div style="display: flex; gap: 1.5rem; margin-bottom: 2rem;">
+                            <div style="width: 40px; height: 40px; background: var(--bg-dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">1</div>
+                            <div>
+                                <h4>Integration</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 0;">Connects to your Google, Outlook, or Apple calendar and CRM software.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1.5rem; margin-bottom: 2rem;">
+                            <div style="width: 40px; height: 40px; background: var(--bg-dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">2</div>
+                            <div>
+                                <h4>Configuration (30 mins)</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 0;">We customize greeting scripts, FAQs, and service pricing.</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1.5rem;">
+                            <div style="width: 40px; height: 40px; background: var(--bg-dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">3</div>
+                            <div>
+                                <h4>Deployment</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 0;">Activate for after-hours, overflow, or 100% of routine inquiries.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Present Credentials -->
+    <section id="credentials">
+        <div class="container text-center">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; font-weight: 700; color: var(--primary);">Trusted by the Beauty Industry</p>
+            <div style="display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 2rem; opacity: 0.6;">
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">50,000+</div>
+                    <div style="font-size: 0.8rem;">Businesses Analyzed</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">93%</div>
+                    <div style="font-size: 0.8rem;">Satisfaction Rate</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-main);">49%</div>
+                    <div style="font-size: 0.8rem;">Lower No-Show Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Show Benefits -->
+    <section id="benefits" style="background: var(--accent-soft);">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 4rem;">
+                <h2>Routine Task Efficiency</h2>
+                <p>Stop the administrative burden. Focus on the art, not the admin.</p>
+            </div>
+            <div class="grid-3">
+                <div class="card">
+                    <h4 style="color: var(--primary);">Reclaim Time</h4>
+                    <p>Save 75% of administrative time. Give staff back nearly 30 hours per week to focus on high-value interactions.</p>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--primary);">Revenue Growth</h4>
+                    <p>Capture the ~40% of bookings that occur after hours. One case study showed an 1,810% ROI in the first year.</p>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--primary);">Cost Efficiency</h4>
+                    <p>Costs $1,200–$6,000 per year, compared to $55,000–$75,000 for a full-time human receptionist.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Social Proof -->
+    <section id="results">
+        <div class="diagonal-bg reverse" style="background: white;"></div>
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h2>Real Salon Results</h2>
+            </div>
+            <div class="grid-2">
+                <div class="card" style="border-left: 5px solid var(--primary);">
+                    <h4>The Suburban Salon</h4>
+                    <p style="font-style: italic; margin-bottom: 1rem;">"5 Stylists"</p>
+                    <p>Recovered <strong>$23,885 in additional revenue</strong> and saved $21,720 in labor costs in just one year.</p>
+                </div>
+                <div class="card" style="border-left: 5px solid var(--primary);">
+                    <h4>Munich Hair Studio</h4>
+                    <p style="font-style: italic; margin-bottom: 1rem;">"High Volume"</p>
+                    <p>Reported a <strong>37% increase in booking rates</strong> immediately after implementing the voice agent.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator (Interactive) -->
+    <section id="calculator" style="background: var(--bg-dark);">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h2 style="color: white;">Calculate Your Potential</h2>
+                <p style="color: rgba(255,255,255,0.7);">See exactly how much revenue you're losing to missed calls.</p>
+            </div>
+            <div class="calc-wrapper">
+                <div class="calc-inputs">
+                    <div class="calc-group">
+                        <label>Avg. Appointment Value ($)</label>
+                        <input type="number" id="avgTicket" value="85">
+                    </div>
+                    <div class="calc-group">
+                        <label>Missed Calls Per Week</label>
+                        <input type="number" id="missedCalls" value="15">
+                    </div>
+                    <div class="calc-group">
+                        <label>Receptionist Hourly Wage ($)</label>
+                        <input type="number" id="hourlyWage" value="20">
+                    </div>
+                </div>
+                <div class="calc-results">
+                    <div style="margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1.5rem;">
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Annual Revenue at Risk</div>
+                        <div class="result-val" id="annualLost">$65,790</div>
+                        <div style="font-size: 0.8rem; opacity: 0.6;">Based on capturing just your missed calls.</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Savings vs Human Staff</div>
+                        <div class="result-val" id="annualSavings" style="color: #a8e6cf;">$38,600</div>
+                        <div style="font-size: 0.8rem; opacity: 0.6;">AI Agent vs Full-time Staff.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 7. Offer, 8. Scarcity, 9. Guarantee, 10. CTA, 11. Warning -->
+    <section id="offer" style="padding: 8rem 0;">
+        <div class="diagonal-bg diagonal-bg-accent" style="transform: skewY(2deg);"></div>
+        <div class="container text-center">
+            
+            <!-- 7. Offer -->
+            <h2>Start making money while you sleep.</h2>
+            <p style="font-size: 1.2rem;">
+                Recover 60-80% of no-show rates. Reduce no-shows to 5% or less.
+            </p>
+            
+            <!-- 8. Scarcity (Implied by opportunity cost in packet) -->
+            <p style="color: var(--primary); font-weight: 700; margin-bottom: 2rem;">
+                Stop losing $2,700–$9,000 every single month to missed calls.
+            </p>
+            
+            <!-- 10. CTA -->
+            <div>
+                <a href="book-demo.html" class="btn btn-primary" style="padding: 1.2rem 3rem; font-size: 1.1rem;">Book a Demo</a>
+            </div>
+            
+            <!-- 11. Warning -->
+            <div style="margin-top: 3rem; background: white; padding: 1rem 2rem; border-radius: 50px; display: inline-block; box-shadow: var(--shadow-card);">
+                <span style="color: #d63031; font-weight: 700;">Warning:</span> 85% of customers will not call back if their initial call is missed.
+            </div>
+        </div>
+    </section>
+
+    <!-- 12. Close / FAQ -->
+    <section id="faq">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 2rem;">Common Questions</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item">
+                    <div class="faq-question">Will it sound like a robot? <span>+</span></div>
+                    <div class="faq-answer">Sources argue modern AI sounds "remarkably human" and that 67% of customers prefer it for simple tasks because there is no hold time.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Does it integrate with my calendar? <span>+</span></div>
+                    <div class="faq-answer">Yes. Technical integration connects the AI agent to existing calendar systems (Google, Outlook, or Apple) and CRM software.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How much does it cost? <span>+</span></div>
+                    <div class="faq-answer">Costs range from $1,200 to $6,000 per year, compared to $55,000–$75,000 for a full-time human receptionist.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What about complex issues? <span>+</span></div>
+                    <div class="faq-answer">AI has limited empathy and struggles with complex problem-solving; these calls are designed to be transferred to humans.</div>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 4rem;">
+                <p>Stop the booking treadmill today.</p>
+                <a href="book-demo.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Book a Demo &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: var(--bg-dark); color: #888; padding: 3rem 0; text-align: center;">
+        <div class="container">
+            <p style="margin-bottom: 0.75rem;">&copy; 2025 MyHairAgent. All rights reserved.</p>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem;">
+                <a href="mailto:mikael@myhairagent.com" style="color: #aaa; text-decoration: none;">mikael@myhairagent.com</a>
+                <span style="margin: 0 0.5rem;">|</span>
+                Irvine, CA
+            </p>
+            <a href="https://www.instagram.com/socialcreditunion/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 50%; color: #aaa; transition: all 0.3s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Floating ElevenLabs Widget -->
+    <elevenlabs-convai agent-id="agent_9801kdhmmmp2f9frst0pj0pkz2gx"></elevenlabs-convai>
+
+    <!-- ElevenLabs Widget Script -->
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed@beta" async type="text/javascript"></script>
+
+    <!-- Application Logic (Calculator & UI) -->
+    <script>
+        // FAQ Toggle Logic
+        document.querySelectorAll('.faq-question').forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.nextElementSibling;
+                const isOpen = answer.classList.contains('open');
+                
+                document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+                document.querySelectorAll('.faq-question span').forEach(s => s.textContent = '+');
+
+                if (!isOpen) {
+                    answer.classList.add('open');
+                    item.querySelector('span').textContent = '-';
+                }
+            });
+        });
+
+        // Calculator Logic
+        const els = {
+            avgTicket: document.getElementById('avgTicket'),
+            missedCalls: document.getElementById('missedCalls'),
+            hourlyWage: document.getElementById('hourlyWage'),
+            annualLost: document.getElementById('annualLost'),
+            annualSavings: document.getElementById('annualSavings')
+        };
+
+        function calculate() {
+            const avg = parseFloat(els.avgTicket.value) || 0;
+            const missed = parseFloat(els.missedCalls.value) || 0;
+            const wage = parseFloat(els.hourlyWage.value) || 0;
+
+            const monthlyLost = missed * avg * 4.3;
+            const annualLost = monthlyLost * 12;
+            
+            const humanCost = wage * 40 * 52;
+            const agentCost = 3000;
+            const savings = humanCost - agentCost;
+
+            els.annualLost.textContent = '$' + annualLost.toLocaleString(undefined, {maximumFractionDigits:0});
+            els.annualSavings.textContent = '$' + savings.toLocaleString(undefined, {maximumFractionDigits:0});
+        }
+
+        [els.avgTicket, els.missedCalls, els.hourlyWage].forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+    </script>
+</body>
+</html>
