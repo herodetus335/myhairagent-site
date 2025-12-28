@@ -158,7 +158,255 @@
             .nav-links { display: flex; }
             .calc-wrapper { flex-direction: row; }
             .calc-inputs, .calc-results { flex: 1; }
+        }
 
+        /* ========================================
+           MIC PERMISSION UI
+           ======================================== */
+
+        /* Floating widget wrapper */
+        .widget-wrapper {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        /* Help link - positioned under widget */
+        #mic-help-link {
+            position: fixed;
+            bottom: 6px;
+            right: 20px;
+            font-size: 0.7rem;
+            color: rgba(0,0,0,0.4);
+            text-decoration: none;
+            padding: 4px 12px;
+            transition: color 0.2s;
+            white-space: nowrap;
+            z-index: 1001;
+        }
+        #mic-help-link:hover {
+            color: var(--primary);
+        }
+
+        /* Permission Modal */
+        .permission-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .permission-modal.active {
+            display: flex;
+        }
+        .permission-modal__content {
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .permission-modal__close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .permission-modal__close:hover {
+            background: #e0e0e0;
+        }
+        .permission-modal__icon {
+            width: 48px;
+            height: 48px;
+            background: #fee2e2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .permission-modal__icon svg {
+            width: 24px;
+            height: 24px;
+            color: #dc2626;
+        }
+        .permission-modal__title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+        .permission-modal__text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .permission-modal__steps {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .permission-modal__steps ol {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+        .permission-modal__steps p {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .permission-modal__buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .permission-modal__btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            border: none;
+        }
+        .permission-modal__btn--primary {
+            background: var(--primary);
+            color: white;
+        }
+        .permission-modal__btn--primary:hover {
+            background: var(--primary-hover);
+        }
+        .permission-modal__btn--secondary {
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+        .permission-modal__btn--secondary:hover {
+            background: #e5e7eb;
+        }
+        .modal-content-section {
+            display: none;
+        }
+
+        /* Fallback Container */
+        #fallback-container {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 320px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .fallback-header {
+            background: var(--bg-dark);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .fallback-form-content {
+            padding: 1rem;
+        }
+        .fallback-form-content textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: none;
+            margin-bottom: 10px;
+        }
+        .fallback-form-content textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .fallback-form-content button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .fallback-form-content button:hover {
+            background: var(--primary-hover);
+        }
+        .fallback-success {
+            display: none;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .fallback-success__icon {
+            width: 48px;
+            height: 48px;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        .fallback-success__icon svg {
+            width: 24px;
+            height: 24px;
+            color: #16a34a;
+        }
+        .fallback-success p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .fallback-success a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .fallback-cta {
+            padding: 1rem;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .fallback-cta a {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-decoration: none;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -461,11 +709,149 @@
         </div>
     </footer>
 
-    <!-- Floating ElevenLabs Widget -->
-    <elevenlabs-convai agent-id="agent_9801kdhmmmp2f9frst0pj0pkz2gx"></elevenlabs-convai>
+    <!-- Permission Modal -->
+    <div class="permission-modal" id="permission-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+        <div class="permission-modal__content">
+            <button class="permission-modal__close" data-action="close-modal" aria-label="Close">&times;</button>
+
+            <!-- Denied Error -->
+            <div class="modal-content-section" data-error-type="denied">
+                <div class="permission-modal__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <h3 class="permission-modal__title" id="modal-title">Microphone access is turned off</h3>
+                <p class="permission-modal__text">Safari is blocking mic access. Turn it on, then refresh.</p>
+                <div class="permission-modal__steps ios-instructions">
+                    <ol>
+                        <li>Open <strong>Settings</strong></li>
+                        <li>Tap <strong>Apps</strong></li>
+                        <li>Tap <strong>Safari</strong></li>
+                        <li>Tap <strong>Microphone</strong> → Allow</li>
+                        <li>Return here and refresh</li>
+                    </ol>
+                </div>
+                <div class="permission-modal__steps desktop-instructions">
+                    <p><strong>Safari:</strong> Settings → Apps → Safari → Microphone → Allow</p>
+                    <p style="margin-top: 8px;"><strong>Chrome:</strong> Click the lock icon in the address bar → Site settings → Microphone → Allow</p>
+                </div>
+                <div class="permission-modal__buttons">
+                    <button class="permission-modal__btn permission-modal__btn--primary" data-action="refresh">I turned it on — refresh</button>
+                    <button class="permission-modal__btn permission-modal__btn--secondary" data-action="use-text">Use text instead</button>
+                </div>
+            </div>
+
+            <!-- Not Found Error -->
+            <div class="modal-content-section" data-error-type="not-found">
+                <div class="permission-modal__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-4h8"/>
+                        <line x1="4" y1="4" x2="20" y2="20" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 class="permission-modal__title">No microphone detected</h3>
+                <p class="permission-modal__text">We couldn't find a microphone on your device. You can type your question instead.</p>
+                <div class="permission-modal__buttons">
+                    <button class="permission-modal__btn permission-modal__btn--primary" data-action="use-text">Type your question</button>
+                </div>
+            </div>
+
+            <!-- In Use Error -->
+            <div class="modal-content-section" data-error-type="in-use">
+                <div class="permission-modal__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m-4-4h8"/>
+                    </svg>
+                </div>
+                <h3 class="permission-modal__title">Microphone is in use</h3>
+                <p class="permission-modal__text">Another app is using your microphone. Close it and try again, or type your question instead.</p>
+                <div class="permission-modal__buttons">
+                    <button class="permission-modal__btn permission-modal__btn--primary" data-action="refresh">Try again</button>
+                    <button class="permission-modal__btn permission-modal__btn--secondary" data-action="use-text">Use text instead</button>
+                </div>
+            </div>
+
+            <!-- Generic/Help -->
+            <div class="modal-content-section" data-error-type="generic">
+                <div class="permission-modal__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m.08 4h.01"/>
+                    </svg>
+                </div>
+                <h3 class="permission-modal__title">Microphone issue</h3>
+                <p class="permission-modal__text">Something went wrong accessing your microphone. Please try again or use text instead.</p>
+                <div class="permission-modal__buttons">
+                    <button class="permission-modal__btn permission-modal__btn--primary" data-action="refresh">Try again</button>
+                    <button class="permission-modal__btn permission-modal__btn--secondary" data-action="use-text">Use text instead</button>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="modal-content-section" data-error-type="help">
+                <div class="permission-modal__icon" style="background: #dbeafe;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m.08 4h.01"/>
+                    </svg>
+                </div>
+                <h3 class="permission-modal__title">Microphone help</h3>
+                <p class="permission-modal__text">If the voice agent isn't working, check your microphone permissions:</p>
+                <div class="permission-modal__steps ios-instructions">
+                    <ol>
+                        <li>Open <strong>Settings</strong></li>
+                        <li>Tap <strong>Apps</strong></li>
+                        <li>Tap <strong>Safari</strong></li>
+                        <li>Tap <strong>Microphone</strong> → Allow</li>
+                        <li>Return here and refresh</li>
+                    </ol>
+                </div>
+                <div class="permission-modal__steps desktop-instructions">
+                    <p><strong>Safari:</strong> Settings → Apps → Safari → Microphone → Allow</p>
+                    <p style="margin-top: 8px;"><strong>Chrome:</strong> Lock icon → Site settings → Microphone → Allow</p>
+                </div>
+                <div class="permission-modal__buttons">
+                    <button class="permission-modal__btn permission-modal__btn--secondary" data-action="close-modal">Got it</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fallback Text Input -->
+    <div id="fallback-container">
+        <div class="fallback-header">Ask MyHairAgent</div>
+        <form id="fallback-form">
+            <div class="fallback-form-content">
+                <textarea id="fallback-message" placeholder="Type your question here..." required></textarea>
+                <button type="submit">Send Message</button>
+            </div>
+        </form>
+        <div class="fallback-success">
+            <div class="fallback-success__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+            </div>
+            <p>Thanks! We'll get back to you shortly.</p>
+            <a href="mailto:mikael@myhairagent.com">Or email us directly</a>
+        </div>
+        <div class="fallback-cta">
+            <a href="tel:+1234567890">Prefer to call? Contact us</a>
+        </div>
+    </div>
+
+    <!-- Floating Widget Wrapper -->
+    <div class="widget-wrapper">
+        <elevenlabs-convai agent-id="agent_9801kdhmmmp2f9frst0pj0pkz2gx"></elevenlabs-convai>
+        <a href="#" id="mic-help-link">Mic not working?</a>
+    </div>
 
     <!-- ElevenLabs Widget Script -->
     <script src="https://unpkg.com/@elevenlabs/convai-widget-embed@beta" async type="text/javascript"></script>
+
+    <!-- Permissions Handler -->
+    <script src="permissions.js"></script>
 
     <!-- Application Logic (Calculator & UI) -->
     <script>
